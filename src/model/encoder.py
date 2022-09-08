@@ -11,7 +11,7 @@ class Encoder(nn.Module):
         self.embedding_dim = embedding_dim
         
         self.embedding = nn.Embedding(self.vocab_size, self.embedding_dim)
-        self.gru = nn.GRU(self.embedding_dim, self.encode_units)
+        self.gru = nn.GRU(self.embedding_dim, self.encode_units, batch_first=True)
         
     def forward(self, x, lens, device):
         """
@@ -24,9 +24,9 @@ class Encoder(nn.Module):
         self.hidden = self.initialize_hidden_state(device)
         x = self.embedding(x)
         
-        x = pack_padded_sequence(x, lens)
+        # x = pack_padded_sequence(x, lens)
         output, self.hidden = self.gru(x, self.hidden)
-        output, _ = pad_packed_sequence(output)
+        # output, _ = pad_packed_sequence(output)
         
         return output, self.hidden
     

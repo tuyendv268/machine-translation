@@ -26,10 +26,11 @@ class Decoder(nn.Module):
         Args:
             x (tensor): _description_
             hidden (tensor): (batch_size, hidden_size)
-            encode_output (tensor): (max_length, batch_size, encode_units)
+            # encode_output (tensor): (max_length, batch_size, encode_units)
+            encode_output (tensor): (batch_size, max_length, encode_units)
         """
         
-        encode_output = encode_output.permute(1, 0, 2)
+        # encode_output = encode_output.permute(1, 0, 2)
         #  hidden with time axis == (batch_size, 1, hidden_size)
         hidden_with_time_axis = hidden.permute(1, 0, 2)
         
@@ -48,7 +49,7 @@ class Decoder(nn.Module):
         output = output.view(-1, output.size(2))
         output = self.fc(output)
         
-        return x, state, attention_weights
+        return output, state, attention_weights
     
     def initialize_hidden_state(self):
         return torch.zeros((1, self.batch_sz, self.dec_units))
