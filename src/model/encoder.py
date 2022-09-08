@@ -1,4 +1,3 @@
-from base64 import encode
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
@@ -17,19 +16,18 @@ class Encoder(nn.Module):
     def forward(self, x, lens, device):
         """
         Args:
-            x (tensor): (batch_size, max_length, embedding_dim)
+            x (tensor): (batch_size, max_length)
             lens (int): length of sentences
             device (device): cuda id
         """
         
         self.hidden = self.initialize_hidden_state(device)
-        
         x = self.embedding(x)
         
-        x = pack_padded_sequence(x, lens) # unpad
-        output, self.hidden = self.gru(x, self.hidden) # gru returns hidden state of all timesteps as well as hidden state at last timestep
-        
+        x = pack_padded_sequence(x, lens)
+        output, self.hidden = self.gru(x, self.hidden)
         output, _ = pad_packed_sequence(output)
+        
         return output, self.hidden
     
     def initialize_hidden_state(self, device):
